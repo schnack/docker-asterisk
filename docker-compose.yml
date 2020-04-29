@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  asterisk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        version: 17.3.0
+        modules: >-
+          --disable BUILD_NATIVE
+    ports:
+      - "5060:5060/udp"
+      - "5061:5061/udp"
+      - "8088:8088/tcp"
+      - "10000-20000:10000-20000/udp"
+    volumes:
+      - etc:/etc/asterisk
+      - lib:/var/lib/asterisk
+      - spool:/var/spool/asterisk
+    networks:
+      - nw
+    command: ['asterisk', '-fvvvvv']
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+volumes:
+  etc:
+  lib:
+  spool:
+
+networks:
+  nw:
